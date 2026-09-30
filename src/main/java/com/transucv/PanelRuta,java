@@ -1,0 +1,47 @@
+package main.java.com.transucv;
+
+import main.java.com.transucv.Rol;
+import main.java.com.transucv.Usuario;
+
+public class PanelRouter 
+{
+
+    public interface VistaNavegacion 
+    {
+        void abrirPanelEstudiante(Usuario usuario);
+        void abrirPanelEmpleado(Usuario usuario);
+        void abrirPanelProfesor(Usuario usuario);
+        void abrirPanelAdministrador(Usuario usuario);
+    }
+
+    private final vistaNavegacion vistaNavegacion;
+
+    public PanelRuta(vistaNavegacion vistaNavegacion) 
+    {
+        this.vistaNavegacion = vistaNavegacion;
+    }
+
+    public void redirigir(Usuario usuario) 
+    {
+        if (usuario == null || usuario.getRol() == null) 
+        {
+            throw new IllegalArgumentException("Usuario no autenticado o sin rol asignado");
+        }
+
+        switch (usuario.getRol()) 
+        {
+            case ESTUDIANTE:
+                vistaNavegacion.abrirPanelEstudiante(usuario);
+                break;
+            case EMPLEADO:
+                vistaNavegacion.abrirPanelEmpleado(usuario);
+                break;
+            case PROFESOR:
+                vistaNavegacion.abrirPanelProfesor(usuario);
+                break;
+            case ADMINISTRADOR:
+                vistaNavegacion.abrirPanelAdministrador(usuario);
+                break;
+        }
+    }
+}
