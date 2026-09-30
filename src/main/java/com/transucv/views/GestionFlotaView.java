@@ -21,6 +21,8 @@ public class GestionFlotaView extends JFrame {
     private Color btnVerdeHover = new Color(33, 136, 56);
     private Color btnGris = new Color(108, 117, 125);
     private Color btnGrisHover = new Color(90, 98, 104);
+    
+    private com.transucv.controllers.GestionFlotaController controller;
 
     public GestionFlotaView() {
         try {
@@ -35,6 +37,9 @@ public class GestionFlotaView extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(248, 249, 250));
+
+        controller = new com.transucv.controllers.GestionFlotaController();
+        
 
         JPanel panelHeader = new JPanel(new BorderLayout());
         panelHeader.setBackground(fondoOscuro);
@@ -53,7 +58,6 @@ public class GestionFlotaView extends JFrame {
 
         JPanel panelIzquierdo = new JPanel(new GridBagLayout());
         panelIzquierdo.setBackground(Color.WHITE);
-        // Usamos borde recto estandar en lugar del redondeado avanzado
         panelIzquierdo.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(bordeGris, 1),
             new EmptyBorder(20, 25, 20, 25)
@@ -84,7 +88,7 @@ public class GestionFlotaView extends JFrame {
         cbEstado = new JComboBox<>(opcionesEstado);
         cbEstado.setFont(fuenteInput);
         cbEstado.setBackground(Color.WHITE);
-        cbEstado.setBorder(new LineBorder(bordeGris, 1)); // Borde recto
+        cbEstado.setBorder(new LineBorder(bordeGris, 1));
         g.gridy++;
         g.insets = new Insets(0, 0, 25, 0);
         panelIzquierdo.add(cbEstado, g);
@@ -97,6 +101,7 @@ public class GestionFlotaView extends JFrame {
         
         panelBotones.add(btnRegistrar);
         panelBotones.add(btnLimpiar);
+        
         
         g.gridy++;
         panelIzquierdo.add(panelBotones, g);
@@ -127,12 +132,12 @@ public class GestionFlotaView extends JFrame {
 
         JScrollPane scroll = new JScrollPane(tablaFlota);
         scroll.getViewport().setBackground(Color.WHITE);
-        scroll.setBorder(new LineBorder(bordeGris, 1)); // Borde recto
+        scroll.setBorder(new LineBorder(bordeGris, 1));
         panelCentro.add(scroll, BorderLayout.CENTER);
 
-        // Listeners
         btnRegistrar.addActionListener(e -> guardarUnidad());
         btnLimpiar.addActionListener(e -> txtPlaca.setText("")); 
+        cargarDatosPrevios();
     }
 
     private void crearInput(JPanel panel, GridBagConstraints g, String texto, JTextField input, Font fLabel, Font fInput) {
@@ -145,7 +150,7 @@ public class GestionFlotaView extends JFrame {
         panel.add(label, g);
 
         input.setFont(fInput);
-        // Borde recto para los inputs
+
         input.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(bordeGris, 1),
             new EmptyBorder(8, 8, 8, 8)
@@ -162,9 +167,8 @@ public class GestionFlotaView extends JFrame {
         btn.setBackground(normal);
         btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setBorder(new LineBorder(normal, 1)); // Borde recto
+        btn.setBorder(new LineBorder(normal, 1)); 
         
-        // Esto es basico en Java, no levanta sospechas
         btn.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 btn.setBackground(hover);
@@ -184,37 +188,33 @@ public class GestionFlotaView extends JFrame {
         String capTexto = txtCapacidad.getText().trim();
         String estado = cbEstado.getSelectedItem().toString();
 
-        if (placa.isEmpty() || modelo.isEmpty() || capTexto.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        String resultado = controller.registrarNuevaUnidad(placa, modelo, capTexto, estado);
 
-        try {
-            int capacidad = Integer.parseInt(capTexto);
-            if (capacidad <= 0) {
-                JOptionPane.showMessageDialog(this, "La capacidad de la unidad debe ser mayor a cero.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            for (int i = 0; i < modeloTabla.getRowCount(); i++) {
-                if (modeloTabla.getValueAt(i, 0).toString().equalsIgnoreCase(placa)) {
-                    JOptionPane.showMessageDialog(this, "La placa ingresada ya existe en el sistema", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            }
-
-            modeloTabla.addRow(new Object[]{placa, modelo, capacidad, estado});
+        if (resultado.equals("Exito") || resultado.toLowerCase().contains("exitosamente")) {
+           
+            modeloTabla.addRow(new Object[]{placa, modelo, capTexto, estado});
             JOptionPane.showMessageDialog(this, "Unidad registrada correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            
+
             txtPlaca.setText("");
             txtModelo.setText("");
             txtCapacidad.setText("");
             cbEstado.setSelectedIndex(0);
-
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "La capacidad debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, resultado, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void cargarDatosPrevios() {
+        if (controller == null) return;
+
+        java.util.List<String[]> unidadesGuardadas = controller.obtenerTodasLasUnidades();
+        for (String[] unidad : unidadesGuardadas) {
+            if (unidad.length == 4) {
+                modeloTabla.addRow(new Object[]{unidad[0], unidad[1], unidad[2], unidad[3]});
+            }
+        }
+    }
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
