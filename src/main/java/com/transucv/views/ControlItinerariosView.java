@@ -9,13 +9,17 @@ import java.awt.*;
 public class ControlItinerariosView extends JFrame {
     
     private javax.swing.table.DefaultTableModel modeloTabla;
+    private ItinerarioController itinerarioController;
 
     public ControlItinerariosView(){
+
+        itinerarioController = new ItinerarioController();
         setTitle("TransUCV - Control de Itinerarios");
         setSize(950, 580);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+        itinerarioController = new ItinerarioController();
+
         JPanel panel = new JPanel();
 
         JPanel tarjetaRutas = crearTarjetaTablero("Rutas Activas", "24", "↑ 2 de ayer", 30, 80);
@@ -43,31 +47,44 @@ public class ControlItinerariosView extends JFrame {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e){
             
-                ItinerarioController controller = new ItinerarioController();
 
                 String idAutobus =JOptionPane.showInputDialog(null, "Ingrese el ID del autobús ");
-
                 if(idAutobus == null || idAutobus.trim().isEmpty()){
                     return;
                 }
+                
+                String ruta = JOptionPane.showInputDialog(null, "Ingrese la ruta (ej. Caracas - Guatire):");
+                if (ruta == null || ruta.trim().isEmpty()) {
+                    return;
+                }
 
-                String [] opcionesEstado = {"Activa", "En Mantenimiento", "Fuera de Servicio"};
-                String estadoUnidad = (String) JOptionPane.showInputDialog(null, "Seleccione el estado de la unidad:", "Estado de la Unidad",JOptionPane.QUESTION_MESSAGE, null, opcionesEstado, opcionesEstado[0]);
+                String codigoRuta = JOptionPane.showInputDialog(null, "Ingrese el codigo de la ruta (ej. R-10A):").toUpperCase();
+                if (codigoRuta == null || codigoRuta.trim().isEmpty()) {
+                    return;
+                }
 
-                if(estadoUnidad == null) return;
+                String tipoRuta = JOptionPane.showInputDialog(null, "Ingrese el tipo de ruta (URBANO o EXTRA-URBANO):");
+                if (tipoRuta == null || tipoRuta.trim().isEmpty()) {
+                    return;
+                }
 
                 String horaInicio= JOptionPane.showInputDialog(null, "Ingrese la hora de inicio del itinerario (HH:mm AM/PM):");
+                if (horaInicio == null || horaInicio.trim().isEmpty()) {
+                    return;
+                }
 
-                String horaFin= JOptionPane.showInputDialog(null, "Ingrese la hora de fin del itinerario (HH:mm AM/PM):");
+                 String horaFin= JOptionPane.showInputDialog(null, "Ingrese la hora de fin del itinerario (HH:mm AM/PM):");
+                if (horaFin == null || horaFin.trim().isEmpty()){
+                    return;
+                }
 
-                String resultado = controller.registrarNuevoItinerario(idAutobus, estadoUnidad, horaInicio, horaFin);
+                String resultado = itinerarioController.registrarNuevoItinerario(idAutobus, horaInicio, horaFin);
 
                 if (resultado.equals("Exito")){
                     JOptionPane.showMessageDialog(panel, "Itinerario registrado correctamente", "Registro Exitoso", JOptionPane.INFORMATION_MESSAGE);
 
-                    String infoCronograma = horaInicio + " - " + horaFin + ", Conductor Asignado (BUS-" + idAutobus + ")";
-
-                    modeloTabla.addRow(new Object[]{"Programado", "RUTA-NUEVA:", "Nueva Ruta (ITIN-XXXX)", estadoUnidad.toUpperCase(), infoCronograma});
+                    String infoCronograma = horaInicio + " - " + horaFin + " (" + idAutobus + ")";
+                    modeloTabla.addRow(new Object[]{"Programado", codigoRuta + ":", ruta, tipoRuta, infoCronograma});
 
                 } else {
                     JOptionPane.showMessageDialog(panel, resultado, "Error de Registro", JOptionPane.ERROR_MESSAGE);
@@ -109,14 +126,10 @@ public class ControlItinerariosView extends JFrame {
         panel.add(tarjetaRutas);
 
         String columnas [] = {"ESTADO", "RUTA", "INFO" ,"TIPO", "CONDUCTOR | BUS"};
-        Object[][] datos = {
-            {"En curso", "R-10A:", "Plaza Vzla - Campus (ITIN-4092)", "URBANO", "7:00 AM - 7:45 AM, Carlos M. (BUS-014)"},
-            {"Retraso","R-45X:", "Guarenas - Campus(ITIN-4093)","EXTRA-URBANO", "6:00 AM - Est. 8:30 AM, Maria L. (BUS-052)"},
-            {"Programado","R-12B:", "Chacaito - Campus (ITIN-4094)","URBANO", "8:30 AM - 9:15 AM, Ana R. (BUS-021)"}
-        };
-
-        modeloTabla = new javax.swing.table.DefaultTableModel(datos, columnas);
+        
+        modeloTabla = new javax.swing.table.DefaultTableModel(null, columnas);
         JTable tablaItinerarios = new JTable(modeloTabla);
+        
         
         tablaItinerarios.setRowHeight(45);
         tablaItinerarios.setShowVerticalLines(false);
@@ -125,6 +138,14 @@ public class ControlItinerariosView extends JFrame {
         tablaItinerarios.setSelectionBackground(new Color(240, 245, 250));
         tablaItinerarios.setSelectionForeground(Color.BLACK);
         tablaItinerarios.setBorder(BorderFactory.createEmptyBorder());
+
+        tablaItinerarios.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tablaItinerarios.getColumnModel().getColumn(0).setPreferredWidth(90);
+        tablaItinerarios.getColumnModel().getColumn(1).setPreferredWidth(70);
+        tablaItinerarios.getColumnModel().getColumn(2).setPreferredWidth(250);
+        tablaItinerarios.getColumnModel().getColumn(3).setPreferredWidth(110);
+        tablaItinerarios.getColumnModel().getColumn(4).setPreferredWidth(350);
+
 
         tablaItinerarios.getTableHeader().setFont(new Font ("SansSerif", Font.BOLD, 11));
         tablaItinerarios.getTableHeader().setBackground(new Color(245, 247, 250));
@@ -142,6 +163,8 @@ public class ControlItinerariosView extends JFrame {
 
 
         panel.add(scrollTabla);
+
+        cargarDatosDesdeArchivo();
 
         add(panel);
     }
@@ -179,6 +202,23 @@ public class ControlItinerariosView extends JFrame {
 
         return tarjeta;
     }
+    private void cargarDatosDesdeArchivo() {
+        if (itinerarioController == null) {
+            return;
+        }
+
+        java.util.List<String[]> datos = itinerarioController.obtenerItinerariosGuardados();
+        for (String[] itinerario : datos) {
+            if (itinerario.length >= 3){
+                String idAutobus = itinerario[0];
+                String horaInicio = itinerario[1];
+                String horaFin = itinerario[2];
+
+                String infoCronograma = horaInicio + " - " + horaFin + " (" + idAutobus + ")";
+                modeloTabla.addRow(new Object[]{"Programado", "RUTA:", "DESCRIPCION", "TIPO", infoCronograma});
+                }
+            }    
+        }
 
     public static void main(String[] args) {
         
