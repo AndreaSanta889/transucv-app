@@ -53,7 +53,7 @@ public class ControlItinerariosView extends JFrame {
                     return;
                 }
                 
-                String ruta = JOptionPane.showInputDialog(null, "Ingrese la ruta (ej. Caracas - Guatire):");
+                String ruta = JOptionPane.showInputDialog(null, "Ingrese la ruta (ej. Chacaito - Campus):");
                 if (ruta == null || ruta.trim().isEmpty()) {
                     return;
                 }
