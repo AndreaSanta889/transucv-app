@@ -1,4 +1,4 @@
-package main.java.com.transucv;
+package com.transucv.exceptions;
 
 public class CredencialesInvalidasException extends Exception 
 {

@@ -1,4 +1,4 @@
-package main.java.com.transucv;
+package com.transucv.models;
 
 // Atributos para el registro y autenticacion 
 public class Usuario 

@@ -1,6 +1,6 @@
-package main.java.com.transucv;
+package com.transucv.repositories;
 
-import main.java.com.transucv.Usuario;
+import com.transucv.models.Usuario;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

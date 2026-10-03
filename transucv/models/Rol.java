@@ -1,4 +1,4 @@
-package main.java.com.transucv;
+package com.transucv.models;
 
 //Para definir los cuatro roles
 public enum Rol 

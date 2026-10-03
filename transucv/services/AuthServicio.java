@@ -1,20 +1,19 @@
-package main.java.com.transucv;
+package com.transucv.services;
 
-import main.java.com.transucv.ExcepcionesCredenciales;
-import main.java.com.transucv.Rol;
-import main.java.com.transucv.Usuario;
-import main.java.com.transucv.UsuarioRepositorio;
+import com.transucv.models.Rol;
+import com.transucv.models.Usuario;
+import com.transucv.repositories.UsuarioRepository;
+import com.transucv.exceptions.CredencialesInvalidasException;
 import java.util.UUID; // Una clase de java para dar identificadores unicos
 
-public class AuthServicio 
-{
-public class AuthServicio 
-{
-    private final UsuarioRepositorio UsuarioRepositorio;
 
-    public AuthService(UsuarioRepositorio UsuarioRepositorio) 
+public class AuthServicio 
+{
+    private final UsuarioRepository usuarioRepositorio;
+
+    public AuthServicio(UsuarioRepository usuarioRepositorio) 
     {
-        this.UsuarioRepositorio = UsuarioRepositorio;
+        this.usuarioRepositorio = usuarioRepositorio;
     }
 
     public Usuario registrarUsuario(String nombre, String correo, String contra, Rol rol) 
@@ -27,7 +26,7 @@ public class AuthServicio
         {
             throw new IllegalArgumentException("El formato del correo es inválido");
         }
-        if (contrasena == null || contrasena.length() < 6) 
+        if (contra == null || contra.length() < 6) 
         {
             throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres");
         }
@@ -35,7 +34,7 @@ public class AuthServicio
         {
             throw new IllegalArgumentException("Debe asignar un rol válido al usuario");
         }
-        if (UsuarioRepositorio.existeCorreo(correo)) 
+        if (usuarioRepositorio.existeCorreo(correo)) 
         {
             throw new IllegalStateException("El correo ya se encuentra registrado");
         }
@@ -49,21 +48,21 @@ public class AuthServicio
             rol
         );
 
-        usuarioRepository.guardar(nuevoUsuario);
+        usuarioRepositorio.guardar(nuevoUsuario);
         return nuevoUsuario;
     }
 
-    public Usuario iniciarSesion(String correo, String contra) throws CredencialesInvalidasException 
+    public Usuario iniciarSesion(String correo, String contra) throws CredencialesInvalidasException
     {
         if (correo == null || contra == null) 
         {
             throw new CredencialesInvalidasException();
         }
 
-        return usuarioRepository.buscarPorCorreo(correo)
-            .filter(u -> u.getContrasena().equals(contra))
+        return usuarioRepositorio.buscarPorCorreo(correo)
+            .filter(u -> u.getContra().equals(contra))
             .orElseThrow(CredencialesInvalidasException::new);
     }
 }
 
-}
+
