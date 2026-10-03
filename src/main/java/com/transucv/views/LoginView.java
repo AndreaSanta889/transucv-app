@@ -7,135 +7,125 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LoginView extends JFrame {
+public class RegistroView extends JFrame {
 
-    private Color fondoOscuro = new Color(33, 37, 41);
-    private Color bordeGris = new Color(206, 212, 218);
-    private Color btnAzul = new Color(13, 110, 253);
-    private Color btnAzulHover = new Color(11, 94, 215);
+    private final Color AZUL_OBSCURO = new Color(10, 25, 47);
+    private final Color AZUL_BOTON = new Color(0, 33, 71);
+    private final Color AZUL_HOVER = new Color(2, 48, 102);
+    private final Color BORDE_INPUT = new Color(226, 232, 240);
+    private final Color TEXTO_MUTED = new Color(100, 116, 139);
 
-    private JTextField txtUsuario;
+    private JTextField txtNombre, txtCorreo;
     private JPasswordField txtPassword;
     private JComboBox<String> cbRol;
-    private JButton btnIngresar;
-    private JButton btnIrRegistro;
 
-    public LoginView() {
-        setTitle("TransUCV - Inicio de Sesión");
-        setSize(400, 450);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public RegistroView() {
+        setTitle("TransUCV - Registro de Usuario");
+        setSize(520, 580);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        setResizable(false);
 
-        JPanel panelHeader = new JPanel();
-        panelHeader.setBackground(fondoOscuro);
-        panelHeader.setBorder(new EmptyBorder(15, 20, 15, 20));
-        JLabel lblTitulo = new JLabel("Iniciar Sesión");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        lblTitulo.setForeground(Color.WHITE);
-        panelHeader.add(lblTitulo);
-        add(panelHeader, BorderLayout.NORTH);
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.WHITE);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(new EmptyBorder(30, 40, 30, 40));
 
-        JPanel panelCentro = new JPanel(new GridBagLayout());
-        panelCentro.setBackground(Color.WHITE);
-        panelCentro.setBorder(new EmptyBorder(20, 30, 20, 30));
+        JLabel lblTitulo = new JLabel("Crear Cuenta Institucional");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        lblTitulo.setForeground(AZUL_OBSCURO);
+        lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        GridBagConstraints g = new GridBagConstraints();
-        g.fill = GridBagConstraints.HORIZONTAL;
-        g.gridx = 0;
-        g.gridy = 0;
-        g.weightx = 1.0;
+        JLabel lblSub = new JLabel("Complete los datos para acceder al sistema de gestión.");
+        lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblSub.setForeground(TEXTO_MUTED);
+        lblSub.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Font fuenteLabel = new Font("Segoe UI", Font.BOLD, 12);
-        Font fuenteInput = new Font("Segoe UI", Font.PLAIN, 12);
+        txtNombre = new JTextField();
+        estilarInput(txtNombre);
 
-        // Campo Usuario
-        crearCampo(panelCentro, g, "Usuario / Correo", txtUsuario = new JTextField(), fuenteLabel, fuenteInput);
-        
-        // Campo Contraseña
-        crearCampo(panelCentro, g, "Contraseña", txtPassword = new JPasswordField(), fuenteLabel, fuenteInput);
+        txtCorreo = new JTextField();
+        estilarInput(txtCorreo);
 
-        // Rol
-        JLabel lblRol = new JLabel("Tipo de Usuario");
-        lblRol.setFont(fuenteLabel);
-        g.insets = new Insets(0, 0, 5, 0);
-        panelCentro.add(lblRol, g);
-        g.gridy++;
+        txtPassword = new JPasswordField();
+        estilarInput(txtPassword);
 
-        cbRol = new JComboBox<>(new String[]{"Servicio de Transporte", "Backoffice / Admin"});
-        cbRol.setFont(fuenteInput);
+        cbRol = new JComboBox<>(new String[]{"Estudiante", "Personal Administrativo", "Conductor"});
+        cbRol.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        cbRol.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         cbRol.setBackground(Color.WHITE);
-        cbRol.setBorder(new LineBorder(bordeGris, 1));
-        g.insets = new Insets(0, 0, 20, 0);
-        panelCentro.add(cbRol, g);
-        g.gridy++;
+        cbRol.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Botones
-        btnIngresar = crearBoton("Ingresar", btnAzul, btnAzulHover);
-        btnIrRegistro = crearBoton("Registrarse", new Color(108, 117, 125), new Color(90, 98, 104));
+        JButton btnRegistrar = new JButton("Registrar Usuario");
+        btnRegistrar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnRegistrar.setForeground(Color.WHITE);
+        btnRegistrar.setBackground(AZUL_BOTON);
+        btnRegistrar.setFocusPainted(false);
+        btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnRegistrar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        btnRegistrar.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 10, 0));
-        panelBotones.setBackground(Color.WHITE);
-        panelBotones.add(btnIngresar);
-        panelBotones.add(btnIrRegistro);
-
-        panelCentro.add(panelBotones, g);
-        add(panelCentro, BorderLayout.CENTER);
-
-        // Listeners
-        btnIngresar.addActionListener(e -> ejecutarLogin());
-        btnIrRegistro.addActionListener(e -> {
-            new RegistroView().setVisible(true);
-            dispose();
+        btnRegistrar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) { btnRegistrar.setBackground(AZUL_HOVER); }
+            @Override
+            public void mouseExited(MouseEvent e) { btnRegistrar.setBackground(AZUL_BOTON); }
         });
+
+        btnRegistrar.addActionListener(e -> ejecutarRegistro());
+
+        panel.add(lblTitulo);
+        panel.add(Box.createVerticalStrut(4));
+        panel.add(lblSub);
+        panel.add(Box.createVerticalStrut(20));
+        
+        agregarCampo(panel, "Nombre Completo", txtNombre);
+        agregarCampo(panel, "Correo Institucional", txtCorreo);
+        agregarCampo(panel, "Contraseña", txtPassword);
+        
+        JLabel lblRol = new JLabel("Tipo de Usuario / Rol");
+        lblRol.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblRol.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(lblRol);
+        panel.add(Box.createVerticalStrut(6));
+        panel.add(cbRol);
+        
+        panel.add(Box.createVerticalStrut(25));
+        panel.add(btnRegistrar);
+
+        add(panel);
     }
 
-    private void crearCampo(JPanel panel, GridBagConstraints g, String texto, JTextField input, Font fLabel, Font fInput) {
-        JLabel label = new JLabel(texto);
-        label.setFont(fLabel);
-        g.insets = new Insets(0, 0, 5, 0);
-        panel.add(label, g);
-        g.gridy++;
+    private void agregarCampo(JPanel panel, String label, JComponent input) {
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(lbl);
+        panel.add(Box.createVerticalStrut(6));
+        panel.add(input);
+        panel.add(Box.createVerticalStrut(12));
+    }
 
-        input.setFont(fInput);
-        input.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(bordeGris, 1),
-            new EmptyBorder(8, 8, 8, 8)
+    private void estilarInput(JTextField field) {
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        field.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        field.setBorder(BorderFactory.createCompoundBorder(
+            new LineBorder(BORDE_INPUT, 1, true),
+            new EmptyBorder(5, 10, 5, 10)
         ));
-        g.insets = new Insets(0, 0, 15, 0);
-        panel.add(input, g);
-        g.gridy++;
+        field.setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
-    private JButton crearBoton(String texto, Color normal, Color hover) {
-        JButton btn = new JButton(texto);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setForeground(Color.WHITE);
-        btn.setBackground(normal);
-        btn.setFocusPainted(false);
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setBorder(new LineBorder(normal, 1));
-
-        btn.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) { btn.setBackground(hover); }
-            public void mouseExited(MouseEvent e) { btn.setBackground(normal); }
-        });
-        return btn;
-    }
-
-    private void ejecutarLogin() {
-        String usuario = txtUsuario.getText().trim();
-        String password = new String(txtPassword.getPassword());
-
-        if (usuario.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    private void ejecutarRegistro() {
+        if (txtNombre.getText().trim().isEmpty() || txtCorreo.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Registro completado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        this.dispose();
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginView().setVisible(true));
+        SwingUtilities.invokeLater(() -> new RegistroView().setVisible(true));
     }
 }
