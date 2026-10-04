@@ -135,8 +135,20 @@ public class GestionFlotaView extends JFrame {
         scroll.setBorder(new LineBorder(bordeGris, 1));
         panelCentro.add(scroll, BorderLayout.CENTER);
 
-        btnRegistrar.addActionListener(e -> guardarUnidad());
-        btnLimpiar.addActionListener(e -> txtPlaca.setText("")); 
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                guardarUnidad();
+            }
+        });
+
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                txtPlaca.setText("");
+            }
+        });
+
         cargarDatosPrevios();
     }
 
@@ -214,11 +226,13 @@ public class GestionFlotaView extends JFrame {
             }
         }
     }
-    
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new GestionFlotaView().setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new GestionFlotaView().setVisible(true);
+            }
         });
     }
 }
