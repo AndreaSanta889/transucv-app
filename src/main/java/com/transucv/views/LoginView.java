@@ -1,5 +1,7 @@
 package com.transucv.views;
 
+import com.transucv.models.Rol;
+import com.transucv.services.AuthServicio;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -7,140 +9,107 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LoginView extends JFrame {
+public class RegistroView extends JFrame {
 
-    private final Color AZUL_OBSCURO = new Color(10, 25, 47);      // #0A192F
-    private final Color AZUL_BOTON = new Color(0, 33, 71);        // #002147
+    private final Color AZUL_OBSCURO = new Color(10, 25, 47);
+    private final Color AZUL_BOTON = new Color(0, 33, 71);
     private final Color AZUL_HOVER = new Color(2, 48, 102);
-    private final Color BORDE_INPUT = new Color(226, 232, 240);   // #E2E8F0
-    private final Color TEXTO_MUTED = new Color(100, 116, 139);   // #64748B
+    private final Color BORDE_INPUT = new Color(226, 232, 240);
+    private final Color TEXTO_MUTED = new Color(100, 116, 139);
 
-    private JTextField txtCorreo;
+    private JTextField txtNombre, txtCorreo;
     private JPasswordField txtPassword;
+    private JComboBox<Rol> cbRol;
+    private final AuthServicio authServicio;
 
-    public LoginView() {
-        setTitle("TransUCV - Autenticación Institucional");
-        setSize(850, 520);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public RegistroView(AuthServicio authServicio) {
+        this.authServicio = authServicio;
+
+        setTitle("TransUCV - Registro de Usuario");
+        setSize(520, 580);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        JPanel mainPanel = new JPanel(new GridLayout(1, 2));
-        mainPanel.add(crearPanelIzquierdo());
-        mainPanel.add(crearPanelDerecho());
-
-        add(mainPanel);
-    }
-
-    private JPanel crearPanelIzquierdo() {
-        JPanel panel = new JPanel();
-        panel.setBackground(AZUL_OBSCURO);
-        panel.setLayout(new BorderLayout(20, 20));
-        panel.setBorder(new EmptyBorder(40, 40, 40, 40));
-
-        JLabel lblLogo = new JLabel("🚌 TransUCV");
-        lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblLogo.setForeground(Color.WHITE);
-
-        JPanel centerPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-        centerPanel.setOpaque(false);
-
-        JLabel lblTitulo = new JLabel("<html><body style='width: 250px;'><h2>Sistema Integral de Gestión</h2></body></html>");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(Color.WHITE);
-
-        JLabel lblDesc = new JLabel("<html><body style='width: 250px;'>Plataforma centralizada para la administración de flotas, itinerarios y reservas de la comunidad universitaria.</body></html>");
-        lblDesc.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblDesc.setForeground(new Color(203, 213, 225));
-
-        centerPanel.add(lblTitulo);
-        centerPanel.add(lblDesc);
-
-        panel.add(lblLogo, BorderLayout.NORTH);
-        panel.add(centerPanel, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
-    private JPanel crearPanelDerecho() {
         JPanel panel = new JPanel();
         panel.setBackground(Color.WHITE);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new EmptyBorder(35, 45, 35, 45));
+        panel.setBorder(new EmptyBorder(30, 40, 30, 40));
 
-        JLabel lblAuth = new JLabel("Autenticación Institucional");
-        lblAuth.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        lblAuth.setForeground(AZUL_OBSCURO);
-        lblAuth.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel lblTitulo = new JLabel("Crear Cuenta Institucional");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        lblTitulo.setForeground(AZUL_OBSCURO);
+        lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblSub = new JLabel("Ingrese sus credenciales para acceder al sistema.");
+        JLabel lblSub = new JLabel("Complete los datos para acceder al sistema de gestión.");
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         lblSub.setForeground(TEXTO_MUTED);
         lblSub.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblCorreo = new JLabel("Correo Institucional");
-        lblCorreo.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblCorreo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        txtNombre = new JTextField();
+        estilarInput(txtNombre);
 
         txtCorreo = new JTextField();
         estilarInput(txtCorreo);
 
-        JLabel lblPass = new JLabel("Contraseña");
-        lblPass.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblPass.setAlignmentX(Component.LEFT_ALIGNMENT);
-
         txtPassword = new JPasswordField();
         estilarInput(txtPassword);
 
-        JButton btnIngresar = new JButton("Ingresar al Sistema →");
-        btnIngresar.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnIngresar.setForeground(Color.WHITE);
-        btnIngresar.setBackground(AZUL_BOTON);
-        btnIngresar.setFocusPainted(false);
-        btnIngresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnIngresar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
-        btnIngresar.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Se cargan directamente los roles definidos en el sistema
+        cbRol = new JComboBox<>(Rol.values());
+        cbRol.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        cbRol.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        cbRol.setBackground(Color.WHITE);
+        cbRol.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        btnIngresar.addMouseListener(new MouseAdapter() {
+        JButton btnRegistrar = new JButton("Registrar Usuario");
+        btnRegistrar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnRegistrar.setForeground(Color.WHITE);
+        btnRegistrar.setBackground(AZUL_BOTON);
+        btnRegistrar.setFocusPainted(false);
+        btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnRegistrar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        btnRegistrar.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        btnRegistrar.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) { btnIngresar.setBackground(AZUL_HOVER); }
+            public void mouseEntered(MouseEvent e) { btnRegistrar.setBackground(AZUL_HOVER); }
             @Override
-            public void mouseExited(MouseEvent e) { btnIngresar.setBackground(AZUL_BOTON); }
+            public void mouseExited(MouseEvent e) { btnRegistrar.setBackground(AZUL_BOTON); }
         });
 
-        btnIngresar.addActionListener(e -> ejecutarLogin());
+        btnRegistrar.addActionListener(e -> ejecutarRegistro());
 
-        // Botón / Enlace para ir al Registro
-        JLabel lblRegistro = new JLabel("<html>¿No tienes cuenta? <font color='#002147'><b>Regístrate aquí</b></font></html>");
-        lblRegistro.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblRegistro.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        lblRegistro.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        lblRegistro.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                new RegistroView().setVisible(true); // Abre la pantalla de Registro
-                dispose(); // Cierra o esconde el Login
-            }
-        });
-
-        panel.add(lblAuth);
+        panel.add(lblTitulo);
         panel.add(Box.createVerticalStrut(4));
         panel.add(lblSub);
         panel.add(Box.createVerticalStrut(20));
-        panel.add(lblCorreo);
+        
+        agregarCampo(panel, "Nombre Completo", txtNombre);
+        agregarCampo(panel, "Correo Institucional", txtCorreo);
+        agregarCampo(panel, "Contraseña", txtPassword);
+        
+        JLabel lblRol = new JLabel("Tipo de Usuario / Rol");
+        lblRol.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblRol.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(lblRol);
         panel.add(Box.createVerticalStrut(6));
-        panel.add(txtCorreo);
-        panel.add(Box.createVerticalStrut(12));
-        panel.add(lblPass);
-        panel.add(Box.createVerticalStrut(6));
-        panel.add(txtPassword);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(btnIngresar);
-        panel.add(Box.createVerticalStrut(15));
-        panel.add(lblRegistro);
+        panel.add(cbRol);
+        
+        panel.add(Box.createVerticalStrut(25));
+        panel.add(btnRegistrar);
 
-        return panel;
+        add(panel);
+    }
+
+    private void agregarCampo(JPanel panel, String label, JComponent input) {
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(lbl);
+        panel.add(Box.createVerticalStrut(6));
+        panel.add(input);
+        panel.add(Box.createVerticalStrut(12));
     }
 
     private void estilarInput(JTextField field) {
@@ -153,18 +122,19 @@ public class LoginView extends JFrame {
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
-    private void ejecutarLogin() {
+    private void ejecutarRegistro() {
+        String nombre = txtNombre.getText().trim();
         String correo = txtCorreo.getText().trim();
         String pass = new String(txtPassword.getPassword());
+        Rol rol = (Rol) cbRol.getSelectedItem();
 
-        if (correo.isEmpty() || pass.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            return;
+        try {
+            authServicio.registrarUsuario(nombre, correo, pass, rol);
+            JOptionPane.showMessageDialog(this, "Usuario registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            new LoginView(authServicio).setVisible(true);
+            this.dispose();
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error en Registro", JOptionPane.WARNING_MESSAGE);
         }
-        JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginView().setVisible(true));
     }
 }
