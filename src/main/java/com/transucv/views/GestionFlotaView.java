@@ -39,6 +39,7 @@ public class GestionFlotaView extends JFrame {
         getContentPane().setBackground(new Color(248, 249, 250));
 
         controller = new com.transucv.controllers.GestionFlotaController();
+        
 
         JPanel panelHeader = new JPanel(new BorderLayout());
         panelHeader.setBackground(fondoOscuro);
@@ -100,6 +101,7 @@ public class GestionFlotaView extends JFrame {
         
         panelBotones.add(btnRegistrar);
         panelBotones.add(btnLimpiar);
+        
         
         g.gridy++;
         panelIzquierdo.add(panelBotones, g);
