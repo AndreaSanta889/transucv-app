@@ -1,4 +1,4 @@
-package com.transucv.controllers;
+package com.transucv;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import com.transucv.controllers.GestionFlotaController;
 
 class GestionFlotaControllerTest {
 
