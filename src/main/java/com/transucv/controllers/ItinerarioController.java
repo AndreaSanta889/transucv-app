@@ -24,15 +24,13 @@ public class ItinerarioController {
                 String linea;
                 while ((linea = br.readLine()) != null) {
                     String[] datos = linea.split(",");
-                    if (datos.length >= 3) {
+                    if (datos.length >= 7) {
                         bdTemporal.add(datos);
                     }
                 }
             } catch (IOException e) {
                 System.err.println("Error al leer el archivo: " + e.getMessage());
             }
-        } else {
-            return;
         }
     }
 
@@ -51,11 +49,9 @@ public class ItinerarioController {
         if (estadoUnidad == null || estadoUnidad.trim().isEmpty()) {
             return "Debe seleccionar un estado válido.";
         }
-
         if (estadoUnidad.equalsIgnoreCase("En Mantenimiento") || estadoUnidad.equalsIgnoreCase("Fuera de Servicio")) {
             return "No se puede asignar un itinerario a una unidad inoperativa";
         }
-        
         return null; 
     }
 
@@ -69,7 +65,7 @@ public class ItinerarioController {
             }
 
             for (String[] itinerario : bdTemporal) {
-                String idGuardado = itinerario[0];
+                String idGuardado = itinerario[0]; // El ID del bus está en la posición 0
                 
                 if (idGuardado.equalsIgnoreCase(idAutobus)) {
                     LocalTime inicioExistente = LocalTime.parse(itinerario[1].toUpperCase(), formatoHora);
@@ -80,35 +76,31 @@ public class ItinerarioController {
                     }
                 }
             }
-
             return null;
 
         } catch (DateTimeParseException e) {
             return "Formato de hora inválido. Por favor use el formato 'h:mm AM/PM' (ej. 7:00 AM).";
         }
     }
-
-    public String registrarNuevoItinerario(String idAutobus, String horaInicio, String horaFin) {
+    public String registrarNuevoItinerario(String idAutobus, String horaInicio, String horaFin, String conductor, String ruta, String codigoRuta, String tipoRuta) {
        
         GestionFlotaController flotaController = new GestionFlotaController();
-       
         String estadoReal = flotaController.obtenerEstadoUnidad(idAutobus);
         
-       if (estadoReal == null) {
+        if (estadoReal == null) {
             return "Error: El autobus "+idAutobus+" no está registrado en la flota.";
         } 
 
         if (estadoReal.equals("En Mantenimiento") || estadoReal.equals("Fuera de Servicio")) {
-            return "No se puede asignar un itinerario a una unidad que está" + estadoReal + ".";
+            return "No se puede asignar un itinerario a una unidad que está " + estadoReal + ".";
         }
 
         String errorHorario = validarCruceHorarios(idAutobus, horaInicio, horaFin);
-        
         if (errorHorario != null) {
             return errorHorario;
         }
 
-        String[] nuevoRegistro = {idAutobus, horaInicio, horaFin};
+        String[] nuevoRegistro = {idAutobus, horaInicio, horaFin, conductor, ruta, codigoRuta, tipoRuta};
         bdTemporal.add(nuevoRegistro);
         guardarDatosEnArchivo();
         return "Exito";

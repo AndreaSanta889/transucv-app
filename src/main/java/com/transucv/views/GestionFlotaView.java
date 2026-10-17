@@ -15,11 +15,12 @@ public class GestionFlotaView extends JFrame {
     private JButton btnRegistrar, btnLimpiar;
     private JTable tablaFlota;
     private DefaultTableModel modeloTabla;
-    private Color fondoOscuro = new Color(0, 86, 179); 
-    private Color bordeGris = new Color(206, 212, 218);
-    private Color btnVerde = new Color(40, 167, 69);
-    private Color btnVerdeHover = new Color(33, 136, 56);
-    private Color btnGris = new Color(108, 117, 125);
+    
+    private Color fondoOscuro = new Color(10, 25, 47); 
+    private Color bordeGris = new Color(226, 232, 240);
+    private Color btnAzul = new Color(0, 33, 71); 
+    private Color btnAzulHover = new Color(2, 48, 102);
+    private Color btnGris = new Color(100, 116, 139);
     private Color btnGrisHover = new Color(90, 98, 104);
     
     private com.transucv.controllers.GestionFlotaController controller;
@@ -39,7 +40,6 @@ public class GestionFlotaView extends JFrame {
         getContentPane().setBackground(new Color(248, 249, 250));
 
         controller = new com.transucv.controllers.GestionFlotaController();
-        
 
         JPanel panelHeader = new JPanel(new BorderLayout());
         panelHeader.setBackground(fondoOscuro);
@@ -96,12 +96,11 @@ public class GestionFlotaView extends JFrame {
         JPanel panelBotones = new JPanel(new GridLayout(1, 2, 12, 0));
         panelBotones.setOpaque(false);
         
-        btnRegistrar = crearBoton("Registrar", btnVerde, btnVerdeHover);
+        btnRegistrar = crearBoton("Registrar", btnAzul, btnAzulHover);
         btnLimpiar = crearBoton("Limpiar", btnGris, btnGrisHover);
         
         panelBotones.add(btnRegistrar);
         panelBotones.add(btnLimpiar);
-        
         
         g.gridy++;
         panelIzquierdo.add(panelBotones, g);
@@ -114,9 +113,7 @@ public class GestionFlotaView extends JFrame {
         String[] columnas = {"Placa", "Modelo", "Capacidad", "Estado"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) { 
-                return false; 
-            }
+            public boolean isCellEditable(int row, int column) { return false; }
         };
         
         tablaFlota = new JTable(modeloTabla);
@@ -135,18 +132,15 @@ public class GestionFlotaView extends JFrame {
         scroll.setBorder(new LineBorder(bordeGris, 1));
         panelCentro.add(scroll, BorderLayout.CENTER);
 
-        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                guardarUnidad();
-            }
-        });
+        btnRegistrar.addActionListener(e -> guardarUnidad());
 
-        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                txtPlaca.setText("");
-            }
+        btnLimpiar.addActionListener(e -> {
+            txtPlaca.setText("");
+            txtModelo.setText("");
+            txtCapacidad.setText("");
+            cbEstado.setSelectedIndex(0);
+            txtPlaca.requestFocus();
+            panelIzquierdo.repaint();
         });
 
         cargarDatosPrevios();
@@ -162,7 +156,6 @@ public class GestionFlotaView extends JFrame {
         panel.add(label, g);
 
         input.setFont(fInput);
-
         input.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(bordeGris, 1),
             new EmptyBorder(8, 8, 8, 8)
@@ -182,14 +175,8 @@ public class GestionFlotaView extends JFrame {
         btn.setBorder(new LineBorder(normal, 1)); 
         
         btn.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                btn.setBackground(hover);
-                btn.setBorder(new LineBorder(hover, 1));
-            }
-            public void mouseExited(MouseEvent e) {
-                btn.setBackground(normal);
-                btn.setBorder(new LineBorder(normal, 1));
-            }
+            public void mouseEntered(MouseEvent e) { btn.setBackground(hover); btn.setBorder(new LineBorder(hover, 1)); }
+            public void mouseExited(MouseEvent e) { btn.setBackground(normal); btn.setBorder(new LineBorder(normal, 1)); }
         });
         return btn;
     }
@@ -203,14 +190,10 @@ public class GestionFlotaView extends JFrame {
         String resultado = controller.registrarNuevaUnidad(placa, modelo, capTexto, estado);
 
         if (resultado.equals("Exito") || resultado.toLowerCase().contains("exitosamente")) {
-           
             modeloTabla.addRow(new Object[]{placa, modelo, capTexto, estado});
             JOptionPane.showMessageDialog(this, "Unidad registrada correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-            txtPlaca.setText("");
-            txtModelo.setText("");
-            txtCapacidad.setText("");
-            cbEstado.setSelectedIndex(0);
+            txtPlaca.setText(""); txtModelo.setText(""); txtCapacidad.setText(""); cbEstado.setSelectedIndex(0);
+            txtPlaca.requestFocus();
         } else {
             JOptionPane.showMessageDialog(this, resultado, "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -218,7 +201,6 @@ public class GestionFlotaView extends JFrame {
 
     private void cargarDatosPrevios() {
         if (controller == null) return;
-
         java.util.List<String[]> unidadesGuardadas = controller.obtenerTodasLasUnidades();
         for (String[] unidad : unidadesGuardadas) {
             if (unidad.length == 4) {
@@ -228,11 +210,6 @@ public class GestionFlotaView extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GestionFlotaView().setVisible(true);
-            }
-        });
+        SwingUtilities.invokeLater(() -> new GestionFlotaView().setVisible(true));
     }
 }
