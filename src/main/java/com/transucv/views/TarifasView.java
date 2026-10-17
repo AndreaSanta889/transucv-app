@@ -1,5 +1,7 @@
 package com.transucv.views;
 
+import com.transucv.controllers.TarifaController;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -25,7 +27,16 @@ public class TarifasView extends JFrame {
     private JButton botonGuardar;
     private JButton botonVolver;
 
+    private final TarifaController controller;
+
     public TarifasView() {
+        this(new TarifaController());
+    }
+
+    // Constructor con inyección de dependencias para facilitar pruebas unitarias
+    public TarifasView(TarifaController controller) {
+        this.controller = controller;
+
         setTitle("TransUCV - Configuración de Tarifas");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -93,7 +104,7 @@ public class TarifasView extends JFrame {
         panelCentro.add(etiquetaMonto, restricciones);
 
         restricciones.gridx = 1;
-        campoMonto = new JTextField();
+        campoMonto = new JTextField("0.0");
         campoMonto.setFont(fuenteCampo);
         campoMonto.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(grisBorde, 1), 
@@ -113,6 +124,16 @@ public class TarifasView extends JFrame {
         panelAbajo.add(botonVolver);
         add(panelAbajo, BorderLayout.SOUTH);
 
+        // Si el usuario selecciona "Urbana", prellenamos 0.0 por defecto
+        comboTipoRuta.addActionListener(e -> {
+            String rutaSeleccionada = (String) comboTipoRuta.getSelectedItem();
+            if ("Urbana".equalsIgnoreCase(rutaSeleccionada)) {
+                campoMonto.setText("0.0");
+            } else {
+                campoMonto.setText("");
+            }
+        });
+
         botonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -129,25 +150,26 @@ public class TarifasView extends JFrame {
     }
 
     private void validarYGuardarTarifa() {
+        String tipoRuta = (String) comboTipoRuta.getSelectedItem();
+        String tipoUsuario = (String) comboTipoUsuario.getSelectedItem();
         String textoMonto = campoMonto.getText().trim();
-        
-        try {
-            double monto = Double.parseDouble(textoMonto);
-            
-            if (monto < 0) {
-                JOptionPane.showMessageDialog(this, "El monto de la tarifa debe ser un número mayor o igual a cero", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            System.out.println("Tarifa actualizada: " + monto + " para ruta " + comboTipoRuta.getSelectedItem());
-            JOptionPane.showMessageDialog(this, "Tarifa para ruta " + comboTipoRuta.getSelectedItem() + " actualizada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            
-            campoMonto.setText(""); 
-            campoMonto.requestFocus();
-            
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "El monto de la tarifa debe ser un número mayor o igual a cero", "Error", JOptionPane.ERROR_MESSAGE);
+
+        String resultado = controller.guardarTarifa(tipoRuta, tipoUsuario, textoMonto);
+
+        if (resultado.startsWith("Error:")) {
+            JOptionPane.showMessageDialog(this, resultado, "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        System.out.println(resultado);
+        JOptionPane.showMessageDialog(this, resultado, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        if ("Urbana".equalsIgnoreCase(tipoRuta)) {
+            campoMonto.setText("0.0");
+        } else {
+            campoMonto.setText("");
+        }
+        campoMonto.requestFocus();
     }
 
     private JButton armarBoton(String texto, Color normal, Color hover) {
