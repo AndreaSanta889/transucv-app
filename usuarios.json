@@ -1,0 +1,9 @@
+[
+  {
+    "id": "c392bea3-70dc-4a36-b921-e43bca20c1e3",
+    "nombre": "Carlos",
+    "correo": "c@gmail.com",
+    "contra": "123456",
+    "rol": "EMPLEADO"
+  }
+]

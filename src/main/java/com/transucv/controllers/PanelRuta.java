@@ -1,6 +1,5 @@
 package com.transucv.controllers;
 
-import com.transucv.models.Rol;
 import com.transucv.models.Usuario;
 
 public class PanelRuta {

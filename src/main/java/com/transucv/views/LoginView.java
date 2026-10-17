@@ -4,8 +4,6 @@ import com.transucv.controllers.PanelRuta;
 import com.transucv.exceptions.CredencialesInvalidasException;
 import com.transucv.models.Usuario;
 import com.transucv.services.AuthServicio;
-import com.transucv.views.ControlItinerariosView;
-import com.transucv.views.GestionFlotaView;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
