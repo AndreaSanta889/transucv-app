@@ -30,6 +30,7 @@ public class RecargaMonederoView extends JFrame {
     private JTextField txtMonto;
     private JButton btnRecargar;
     private JButton btnCancelar;
+    private JButton btnIrPago;
 
     private final Color AZUL_PRIMARIO = new Color(10, 25, 47);
     private final Color AZUL_BOTON = new Color(0, 33, 71);
@@ -105,9 +106,13 @@ public class RecargaMonederoView extends JFrame {
         panelBotones.setBackground(FONDO_CLARO);
         panelBotones.setBorder(new EmptyBorder(0,0,20,80));
 
+        btnIrPago = estiloBoton("Pagar Pasaje", AZUL_BOTON, Color.WHITE);
         btnRecargar = estiloBoton("Confirmar Recarga", AZUL_BOTON, Color.WHITE);
         btnCancelar = estiloBoton("Cancelar", ROJO_CANCELAR, Color.WHITE);
 
+        btnIrPago.setBorder(BorderFactory.createLineBorder(AZUL_BOTON));
+
+        panelBotones.add(btnIrPago);
         panelBotones.add(btnRecargar);
         panelBotones.add(btnCancelar);
         add(panelBotones, BorderLayout.SOUTH);
@@ -182,7 +187,23 @@ public class RecargaMonederoView extends JFrame {
         btnCancelar.addActionListener(listener);
     }
 
+    public void setIrPagoListener(ActionListener listener){
+        btnIrPago.addActionListener(listener);
+    }
+
+    public void mostrarMensaje(String mensaje, String titulo, boolean error){
+        if(error){
+            javax.swing.JOptionPane.showMessageDialog(this, mensaje, titulo, javax.swing.JOptionPane.WARNING_MESSAGE);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, mensaje, titulo, javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new RecargaMonederoView().setVisible(true));
+    }
+
+    public void cerrarVista(){
+        this.dispose();
     }
 }
