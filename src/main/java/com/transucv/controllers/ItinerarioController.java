@@ -6,11 +6,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ItinerarioController {
 
     private List<String[]> bdTemporal = new ArrayList<>();
-    private DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("h:mm a");
+    private DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("h:mm a", Locale.US);
     private final String archivoDatos = "datosItinerarios.txt";
     
     public ItinerarioController() {
