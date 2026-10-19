@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
@@ -199,9 +198,6 @@ public class RecargaMonederoView extends JFrame {
         }
 
     }    
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new RecargaMonederoView().setVisible(true));
-    }
 //comentario para que git lo vea
     public void cerrarVista(){
         this.dispose();

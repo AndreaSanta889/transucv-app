@@ -3,6 +3,8 @@ package com.transucv.controllers;
 import com.transucv.models.Monedero;
 import com.transucv.services.MonederoServicio;
 import com.transucv.views.RecargaMonederoView;
+import com.transucv.views.PagoPasajeView;
+import com.transucv.controllers.PagoPasajeController;
 
 import javax.swing.JOptionPane;
 import java.math.BigDecimal;
@@ -10,11 +12,13 @@ import java.math.BigDecimal;
 public class MonederoController {
 
     private final RecargaMonederoView vista;
+    private final PagoPasajeView vistaPasaje;
     private final MonederoServicio monederoServicio;
     private final String idUsuarioActual;
 
-    public MonederoController(RecargaMonederoView vista, MonederoServicio monederoServicio, String idUsuarioActual) {
+    public MonederoController(RecargaMonederoView vista, MonederoServicio monederoServicio, String idUsuarioActual, PagoPasajeView vistaPasaje) {
         this.vista = vista;
+        this.vistaPasaje = vistaPasaje;
         this.monederoServicio = monederoServicio;
         this.idUsuarioActual = idUsuarioActual;
 
@@ -24,6 +28,7 @@ public class MonederoController {
         // Conectar los eventos de la vista con la lógica del controlador
         this.vista.setRecargarListener(e -> procesarRecarga());
         this.vista.setCancelarListener(e -> cancelarOperacion());
+        this.vista.setIrPagoListener(e -> irPago());
     }
 
     //Procesa la recarga capturando los datos desde la vista y validándolos con el servicio
@@ -66,6 +71,18 @@ public class MonederoController {
         vista.setSaldoActual(monedero.getSaldo().toString());
     }
 
+    private void irPago(){
+            int opcion = JOptionPane.showConfirmDialog(vista, 
+            "¿Desea ir a la Ventana de Pago?", 
+            "Confirmar", 
+            JOptionPane.YES_NO_OPTION);
+
+            if (opcion == JOptionPane.YES_OPTION){
+                vistaPasaje.setVisible(true);
+                vista.dispose();
+            }
+    }
+
     private void cancelarOperacion() {
         int opcion = JOptionPane.showConfirmDialog(vista, 
             "¿Desea cancelar la operación de recarga?", 
@@ -84,8 +101,9 @@ public class MonederoController {
             com.transucv.services.MonederoServicio monederoServicio = new com.transucv.services.MonederoServicio(tarifaServicio);
 
             com.transucv.views.RecargaMonederoView vista = new com.transucv.views.RecargaMonederoView();
+            com.transucv.views.PagoPasajeView vistaPasaje = new com.transucv.views.PagoPasajeView();
 
-            new MonederoController(vista, monederoServicio, "EST-001");
+            new MonederoController(vista, monederoServicio, "EST-001", vistaPasaje);
 
             vista.setVisible(true);
         });
