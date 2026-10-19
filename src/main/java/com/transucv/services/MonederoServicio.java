@@ -67,7 +67,7 @@ public class MonederoServicio {
             String idTx = "PAG-" + System.currentTimeMillis();
             Transaccion tx = new Transaccion(idTx, null, BigDecimal.ZERO, TipoTransaccion.PAGO_PASAJE, 
                                              "Pasaje Ruta Urbana: " + detalleRuta);
-            monedero.acreditar(BigDecimal.ZERO, tx);
+            monedero.debitar(BigDecimal.ZERO, tx);
             return "Pago exitoso (Ruta Gratuita). Saldo restante: Bs " + monedero.getSaldo();
         }
 
