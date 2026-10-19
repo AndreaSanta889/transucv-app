@@ -28,7 +28,12 @@ public class PagoPasajeController {
         actualizarDatosUsuario();
 
         cargarItinerariosDisponibles();
-
+        this.vista.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override 
+            public void componentShown(java.awt.event.ComponentEvent e){
+                    actualizarDatosUsuario();
+                }
+            });
         this.vista.setPagarListener(e -> procesarPago());
         this.vista.setCambioRutaListener(e -> actualizarTarifaAlCambiarRuta());
         this.vista.setIrRecarga(e -> abrirVistaRecarga());
@@ -56,6 +61,7 @@ public class PagoPasajeController {
         };
         vista.cargarItinerarios(itinerarios);
     }
+    
 
     private void actualizarTarifaAlCambiarRuta() {
         String itinerario = vista.getItinerarioSeleccionado();

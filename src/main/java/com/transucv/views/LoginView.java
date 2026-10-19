@@ -205,16 +205,29 @@ public class LoginView extends JFrame implements PanelRuta.VistaNavegacion {
     @Override
     public void abrirPanelEstudiante(Usuario usuario) {
         JOptionPane.showMessageDialog(this, "Bienvenido al Panel Estudiantil: " + usuario.getNombre());
+        abrirVentanaPagoPasaje(usuario);
     }
 
     @Override
     public void abrirPanelEmpleado(Usuario usuario) {
         JOptionPane.showMessageDialog(this, "Bienvenido al Panel de Empleados: " + usuario.getNombre());
+        abrirVentanaPagoPasaje(usuario);
     }
 
     @Override
     public void abrirPanelProfesor(Usuario usuario) {
         JOptionPane.showMessageDialog(this, "Bienvenido al Panel Docente: " + usuario.getNombre());
+        abrirVentanaPagoPasaje(usuario);
+    }
+
+    private void abrirVentanaPagoPasaje(Usuario usuario){
+
+        com.transucv.services.TarifaServicio tarifaServicio = new com.transucv.services.TarifaServicio();
+        com.transucv.services.MonederoServicio monederoServicio = new com.transucv.services.MonederoServicio(tarifaServicio);
+        com.transucv.views.PagoPasajeView vistaPago = new com.transucv.views.PagoPasajeView();
+
+        new com.transucv.controllers.PagoPasajeController(vistaPago, monederoServicio, tarifaServicio, usuario.getId(), usuario.getRol());
+        vistaPago.setVisible(true);
     }
 
     @Override

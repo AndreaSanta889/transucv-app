@@ -5,5 +5,12 @@
     "correo": "c@gmail.com",
     "contra": "123456",
     "rol": "ADMINISTRADOR"
+  },
+  {
+    "id": "ef4027b2-e361-4610-9e35-c4b635a6508f",
+    "nombre": "C",
+    "correo": "c1@gmail.com",
+    "contra": "123456",
+    "rol": "ESTUDIANTE"
   }
 ]
