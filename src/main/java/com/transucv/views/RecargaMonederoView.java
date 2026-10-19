@@ -202,7 +202,7 @@ public class RecargaMonederoView extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new RecargaMonederoView().setVisible(true));
     }
-
+//comentario para que git lo vea
     public void cerrarVista(){
         this.dispose();
     }
