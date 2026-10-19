@@ -1,0 +1,2 @@
+Urbana,Profesor,0.0
+Extraurbana,Profesor,200.0
