@@ -14,6 +14,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -29,6 +31,7 @@ public class PagoPasajeView extends JFrame {
     private JButton btnPagar;
     private JButton btnCancelar;
     private JButton btnIrRecarga;
+    private JTextArea boletoArea;
 
     private final Color AZUL_PRIMARIO = new Color(10, 25, 47);
     private final Color AZUL_BOTON = new Color(0, 33, 71);
@@ -98,6 +101,20 @@ public class PagoPasajeView extends JFrame {
         lblTarifaCalculada.setForeground(AZUL_PRIMARIO);
         panelFormulario.add(lblTarifaCalculada);
         
+        boletoArea = new JTextArea(8,30);
+        boletoArea.setEditable(false);
+        boletoArea.setFont(new Font("SansSerif", Font.BOLD, 14));
+        boletoArea.setBackground(Color.LIGHT_GRAY);
+        boletoArea.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(
+                Color.LIGHT_GRAY,1,true),
+                BorderFactory.createEmptyBorder(10,10,10,10)));
+
+        JScrollPane scrollBoletos = new JScrollPane(boletoArea);
+        scrollBoletos.setBorder(BorderFactory.createTitledBorder("Boletos"));
+
+        panelContenedor.add(boletoArea,BorderLayout.SOUTH);
+
         panelContenedor.add(panelFormulario, BorderLayout.NORTH);
         add(panelContenedor, BorderLayout.CENTER);
     
@@ -113,6 +130,7 @@ public class PagoPasajeView extends JFrame {
         panelBotones.add(btnPagar);
         panelBotones.add(btnCancelar);
         add(panelBotones, BorderLayout.SOUTH);
+
         
     }
 
@@ -134,6 +152,10 @@ public class PagoPasajeView extends JFrame {
 
     public void setTarifaCalculada (String monto){
         lblTarifaCalculada.setText("Tarifa a debitar: Bs. " + monto);
+    }
+
+    public void setBoleto (String boletoString){
+        boletoArea.setText(boletoString);
     }
 
     public String getItinerarioSeleccionado(){

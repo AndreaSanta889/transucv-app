@@ -91,10 +91,22 @@ public class PagoPasajeController {
         );
 
         if (resultado.startsWith("Pago exitoso")) {
+            
+            String ticket = "=================================================================" + "\n"
+            + "                                                        TICKET                                                " + "\n"
+            +"Usuario: " +idUsuarioActual + "\n" 
+            + "Rol: " + rolUsuarioActual + "\n" 
+            + "Ruta: " + itinerario + "\n" 
+            + "Detalle: " + resultado + "\n" +
+            "================================================================="; 
+
             vista.mostrarMensaje(resultado, "Comprobante de Pago", false);
+            vista.setBoleto(ticket);
+
             actualizarDatosUsuario();
         } else {
             vista.mostrarMensaje(resultado, "Error en Pago", true);
+            vista.setBoleto("");
         }
     }
 
