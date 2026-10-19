@@ -12,5 +12,19 @@
     "correo": "c1@gmail.com",
     "contra": "123456",
     "rol": "ESTUDIANTE"
+  },
+  {
+    "id": "24751598-fa03-47cc-b114-da4cedf3a93e",
+    "nombre": "cesar",
+    "correo": "cesar@gmail.com",
+    "contra": "1234567",
+    "rol": "ADMINISTRADOR"
+  },
+  {
+    "id": "b70b162a-4631-447d-8281-026480a7582a",
+    "nombre": "Pedro",
+    "correo": "pedro@gmail.com",
+    "contra": "123456",
+    "rol": "ESTUDIANTE"
   }
 ]
